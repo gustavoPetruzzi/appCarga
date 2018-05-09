@@ -1,14 +1,24 @@
-<ion-header>
-  <ion-navbar>
-    <ion-title>
-      Ionic Blank
-    </ion-title>
-  </ion-navbar>
-</ion-header>
+<ion-content >
+  <ion-row class="fila">
+    <ion-col text-center>
+      <img src="assets/imgs/pesos.png" height="50%" width="auto" alt="" margin padding>
+    </ion-col>
+    <ion-col text-center>
+      <ion-row>
+        <h1 class="credito" [ngStyle]="{'color': credito > 0 ? 'green': 'black' }"> $ {{ credito }} </h1>  
+      </ion-row>
+      <ion-row>
+        <h1 class="credito" [ngStyle]="{'color': credito > 0 ? 'green': 'black' }"> {{recienCargado}} </h1>
+      </ion-row>
+    </ion-col>
+  </ion-row>
+  <ion-row class="fila">
+    <ion-col class="todo carta texto" text-center (click)="escanear()">
+      <h1 class="card-title" padding margin > Escanear </h1>
+    </ion-col>
+    <ion-col text-center class="todo carta imagen">
+      <img  padding src="assets/imgs/qrCode.png" width="auto">
+    </ion-col>
+  </ion-row>
 
-<ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
 </ion-content>

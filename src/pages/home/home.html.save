@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      {{usuario}}
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content >
+  <ion-row class="fila">
+    <ion-col text-center>
+      <img src="assets/imgs/pesos.png" height="50%" width="auto" alt="">
+    </ion-col>
+    <ion-col text-center>
+      <h1 class="credito" [ngStyle]="{'color': credito > 0 ? 'green': 'black' }"> Credito </h1>
+      <h1 class="credito" [ngStyle]="{'color': credito > 0 ? 'green': 'black' }"> [ </h1>
+    </ion-col>
+  </ion-row>
+  <ion-row class="fila">
+    <ion-col class="todo carta" text-center (click)="escanear()">
+      <h1 class="card-title" padding margin > Escanear </h1>
+    </ion-col>
+    <ion-col class="todo carta2" text-center (click)="mostrar()">
+      <h1 class="card-title" padding margin > Mis codigos </h1>
+    </ion-col>
+  </ion-row>
+
+</ion-content>
