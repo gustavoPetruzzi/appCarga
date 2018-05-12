@@ -4,6 +4,13 @@ import { HomePage }from '../home/home';
 
 import { RegistroPage } from '../registro/registro';
 import { AngularFireAuth } from 'angularfire2/auth';
+import { Usuario } from '../../clases/usuario';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
+import { Observable } from 'rxjs/Observable';
+import { take } from 'rxjs/operators';
+
+
+
 /**
  * Generated class for the LoginPage page.
  *
@@ -17,7 +24,9 @@ import { AngularFireAuth } from 'angularfire2/auth';
   templateUrl: 'login.html',
 })
 export class LoginPage {
-
+  coleccionTipada: AngularFirestoreCollection<Usuario>;
+  listadoUsuarios: Observable<Usuario[]>;
+  usuario:Usuario;
   nombre: string;
   pass: string;
   clave: string;
@@ -25,11 +34,28 @@ export class LoginPage {
     public navCtrl: NavController, 
     private toastCtrl: ToastController, 
     private loadingCtrl: LoadingController,
-    private angularFire: AngularFireAuth) 
+    private angularFire: AngularFireAuth,
+    private firestore: AngularFirestore) 
   {
-
+    
   }
 
+  creaFondo(mensaje, error){
+    let fondo:string;
+    if(error){
+      fondo = `
+          <div>
+            <ion-row text-center>
+              <img src="assets/imgs/error.png">
+            </ion-row>
+            <ion-row>
+              <h1> ${mensaje} </h1>
+            </ion-row> 
+          </div> `;
+    }
+    return fondo;
+
+  }
 
   ingresar(){
     switch (this.nombre) {
@@ -55,15 +81,41 @@ export class LoginPage {
     this.login();
   }
   
+
+
+
+
   async login(){
+    
     let esperador = this.esperar();
     esperador.present();
+    
     await this.angularFire.auth.signInWithEmailAndPassword(this.nombre,this.clave)
       .then(result => 
         {
-          esperador.dismiss();
+ 
+          this.coleccionTipada = this.firestore.collection<Usuario>('usuarios');
+          // .snapshotChanges() returns a DocumentChangeAction[], which contains
+          // a lot of information about "what happened" with each change. If you want to
+          // get the data and the id use the map operator.
+          this.listadoUsuarios = this.coleccionTipada.snapshotChanges().map(actions => {
+            return actions.map(a => {
+              const data = a.payload.doc.data() as Usuario;
+              const id = a.payload.doc.id;
+              return { id, ...data };
+            });
+          });
+          this.listadoUsuarios.subscribe( datos =>{
+            datos.forEach(element => {
+              if(element.nombre == this.nombre){
+                this.usuario = element;
+                esperador.dismiss();
+              }
+            });
+          })
           
-
+            
+          
           let fondo = `
           <div>
             <ion-row text-center>
@@ -77,7 +129,9 @@ export class LoginPage {
           logueadoBien.present();
 
           logueadoBien.onDidDismiss(() => {
-            this.navCtrl.setRoot(HomePage, { nombre:this.nombre })    
+            this.navCtrl.setRoot(HomePage, { 
+              usuario: this.usuario
+            })    
           })
           
           
@@ -90,47 +144,18 @@ export class LoginPage {
       .catch(error =>
         {
           esperador.dismiss();
-          console.log("NO SE HA LOGUEADO")
+          let errorCode = error.code;
+          
+          if(errorCode === 'auth/invalid-email'){
+            let loadingError = this.esperar(this.creaFondo("Mail invalido", true));
+              loadingError.present();
+              setTimeout(function() {
+              loadingError.dismiss();
+            }, 3000);
+          }
         });
    }
     
-    /*
-    console.log(this.nombre)
-    console.log(this.pass)
-    if(this.nombre == "gustavo" && this.pass =="admin"){
-      let data = {
-        nombre : this.nombre,
-      };
-
-      let toast = this.toastCtrl.create({
-        message: "Se ha logueado",
-        duration: 2000,
-        position: 'bottom'
-      });
-
-      toast.onDidDismiss(() =>{
-        this.navCtrl.push(HomePage,{
-          data: data
-        });
-      });
-
-      toast.present();
-
-    }
-    else{
-      let toast = this.toastCtrl.create({
-        message: "No se ha logueado",
-        duration: 2000,
-        position: 'bottom'
-      });
-
-      toast.onDidDismiss(() =>{
-        console.log("No se ha logueado");
-      });
-      
-      toast.present();  
-    }
-    */
 
   esperar(personalizado?:string) {
     let loading;

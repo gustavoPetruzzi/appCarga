@@ -15,12 +15,12 @@
     <form (ngSubmit)="ingresar()">
       <ion-item class="rounded">
         <ion-label>  <ion-icon name="person"></ion-icon> Nombre</ion-label>
-        <ion-input type="text" [(ngModel)]="nombre" name="Nombre" class="item" >  <ion-icon name="person"></ion-icon></ion-input>
+        <ion-input type="text" [(ngModel)]="nombre" name="Nombre" class="item" required >  <ion-icon name="person"></ion-icon></ion-input>
       </ion-item>
       <ion-item class="rounded">
         <ion-label>   <ion-icon name="key"></ion-icon> Contraseña</ion-label>
         <ion-icon name="person"></ion-icon>
-        <ion-input type="password" [(ngModel)]="pass" name="Contrasena" class="item"></ion-input>
+        <ion-input type="password" [(ngModel)]="pass" name="Contrasena" class="item" required ></ion-input>
       </ion-item>
       <button ion-button color="danger" round type="submit" block>Loguearse</button>
     </form>
