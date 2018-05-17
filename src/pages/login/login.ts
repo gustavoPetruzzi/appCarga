@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ToastController, LoadingController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ToastController, LoadingController, Loading } from 'ionic-angular';
 import { HomePage }from '../home/home';
 
 import { RegistroPage } from '../registro/registro';
@@ -30,6 +30,7 @@ export class LoginPage {
   nombre: string;
   pass: string;
   clave: string;
+  valido:Boolean = false;
   constructor(
     public navCtrl: NavController, 
     private toastCtrl: ToastController, 
@@ -40,27 +41,29 @@ export class LoginPage {
     
   }
 
-  creaFondo(mensaje, error){
-    let fondo:string;
-    if(error){
-      fondo = `
+  creaFondo(mensaje, imagen){
+    let fondo = `
           <div>
-            <ion-row text-center>
-              <img src="assets/imgs/error.png">
+            <ion-row>
+              <ion-col>
+                <img src="${imagen}">
+              </ion-col>
             </ion-row>
             <ion-row>
               <h1> ${mensaje} </h1>
             </ion-row> 
           </div> `;
-    }
     return fondo;
 
   }
 
-  ingresar(){
+  ingresar(user:string){
+    if(user){
+      this.nombre = user;
+    }
     switch (this.nombre) {
       case 'admin@gmail.com':
-        this.clave= '111111';
+        this.clave= '11112';
         break;
       case 'invitado@gmail.com':
         this.clave = '222222';
@@ -83,7 +86,15 @@ export class LoginPage {
   
 
 
-
+  esValido(){
+    
+    if(this.nombre != undefined && this.pass != undefined){
+      this.valido = true;
+    }
+    else if(this.nombre == undefined && this.pass == undefined){
+      this.valido = false;
+    }
+  }
 
   async login(){
     
@@ -93,7 +104,14 @@ export class LoginPage {
     await this.angularFire.auth.signInWithEmailAndPassword(this.nombre,this.clave)
       .then(result => 
         {
- 
+          esperador.dismiss();
+          let logueado:Loading = this.esperar(this.creaFondo("Logueado Correctamente","assets/imgs/logueado.png"))
+          logueado.present();
+          logueado.onDidDismiss(alto => {
+            this.navCtrl.push(HomePage, {
+                usuario: this.usuario
+              })
+          })
           this.coleccionTipada = this.firestore.collection<Usuario>('usuarios');
           // .snapshotChanges() returns a DocumentChangeAction[], which contains
           // a lot of information about "what happened" with each change. If you want to
@@ -103,61 +121,46 @@ export class LoginPage {
               const data = a.payload.doc.data() as Usuario;
               const id = a.payload.doc.id;
               return { id, ...data };
-            });
+            })
           });
-          this.listadoUsuarios.subscribe( datos =>{
-            datos.forEach(element => {
-              if(element.nombre == this.nombre){
-                this.usuario = element;
-                esperador.dismiss();
-              }
+            this.listadoUsuarios.map( datos =>{
+              return datos.filter( usuarios => usuarios.nombre == this.nombre);
+            }).subscribe(res =>{
+              
+              this.usuario = res[0];
+              setTimeout(function() {
+                logueado.dismiss();
+              }, 2000);
+              
             });
-          })
-          
-            
-          
-          let fondo = `
-          <div>
-            <ion-row text-center>
-              <img src="assets/imgs/logueado.png">
-            </ion-row>
-            <ion-row>
-              <h1> Logueado correctamente! </h1>
-            </ion-row> 
-          </div> `;
-          let logueadoBien = this.esperar(fondo);
-          logueadoBien.present();
-
-          logueadoBien.onDidDismiss(() => {
-            this.navCtrl.setRoot(HomePage, { 
-              usuario: this.usuario
-            })    
-          })
-          
-          
-          setTimeout(function() {
-            logueadoBien.dismiss();  
-          }, 1000);
-
-
         })
       .catch(error =>
         {
           esperador.dismiss();
           let errorCode = error.code;
-          
+          let loadingError;
           if(errorCode === 'auth/invalid-email'){
-            let loadingError = this.esperar(this.creaFondo("Mail invalido", true));
-              loadingError.present();
-              setTimeout(function() {
+              loadingError = this.esperar(this.creaFondo("Mail invalido", "assets/imgs/error.png"));
+          }
+          else if(error === 'auth/user-not-found'){
+            loadingError = this.esperar(this.creaFondo("Usuario no encontrado", "assets/imgs/error.png"));
+          }
+          else if(error === 'auth/wrong-password'){
+            loadingError = this.esperar(this.creaFondo("error con usuario/password", "assets/imgs/error.png"));
+          }
+          else{
+            loadingError = this.esperar(this.creaFondo("Ha ocurrido un error", "assets/imgs/error.png"));
+            console.log(errorCode);
+          }
+            loadingError.present();
+            setTimeout(function() {
               loadingError.dismiss();
             }, 3000);
-          }
         });
    }
     
 
-  esperar(personalizado?:string) {
+  esperar(personalizado?:string):Loading {
     let loading;
     if(!personalizado){
       loading = this.loadingCtrl.create({

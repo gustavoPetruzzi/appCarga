@@ -12,7 +12,7 @@
     </ion-col>
   </ion-row>
   <div class="login">
-    <form (ngSubmit)="ingresar()">
+    <form (ngSubmit)="ingresar()" #loginForm="ngForm">
       <ion-item class="rounded">
         <ion-label>  <ion-icon name="person"></ion-icon> Nombre</ion-label>
         <ion-input type="text" [(ngModel)]="nombre" name="Nombre" class="item" required >  <ion-icon name="person"></ion-icon></ion-input>
@@ -22,10 +22,15 @@
         <ion-icon name="person"></ion-icon>
         <ion-input type="password" [(ngModel)]="pass" name="Contrasena" class="item" required ></ion-input>
       </ion-item>
-      <button ion-button color="danger" round type="submit" block>Loguearse</button>
+      <button ion-button color="danger" round type="submit" block [disabled]="!loginForm.form.valid" >Loguearse</button>
     </form>
   </div>
   <button ion-button color="secondary" full round (click)="registrar()">Registrarse </button>
+  <button ion-button color="secondary"  (click)="ingresar('admin@gmail.com')">ingresar admin </button>
+  <button ion-button color="secondary" (click)="ingresar('invitado@gmail.com')">ingresar invitado </button>
+  <button ion-button color="secondary" (click)="ingresar('usuario@gmail.com')">ingresar usuario </button>
+  <button ion-button color="secondary" (click)="ingresar('anonimo@gmail.com')">ingresar anonimo </button>
+  <button ion-button color="secondary" (click)="ingresar('tester@gmail.com')">ingresar tester </button>
 
   
 </ion-content>

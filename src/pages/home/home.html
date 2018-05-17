@@ -1,17 +1,55 @@
-<ion-content >
-  <ion-row class="fila">
-    <ion-col text-center>
-      <img src="assets/imgs/pesos.png" height="50%" width="auto" alt="" margin padding>
-    </ion-col>
-    <ion-col text-center>
-      <ion-row>
-        <h1 class="credito" [ngStyle]="{'color': credito > 0 ? 'green': 'black' }"> $ {{ credito }} </h1>  
-      </ion-row>
-      <ion-row>
-        <h1 class="credito" [ngStyle]="{'color': credito > 0 ? 'green': 'black' }"> {{recienCargado}} </h1>
-      </ion-row>
-    </ion-col>
-  </ion-row>
+<ion-content class="home" >
+  
+  <ion-grid>
+
+    <ion-row>
+      <ion-col>
+        <ion-row>
+          <ion-col col-9 offset-2 text center>
+            <h1 class="credito" [ngStyle]="{'color': credito > 0 ? 'green': 'black' }"> $  {{ credito }} </h1>  
+          </ion-col>
+
+          <ion-col col-2>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="carta" (click)="escanear()" >
+      <ion-col>
+        <img  src="assets/imgs/qrCode.png" width="auto" height="auto">
+      </ion-col>
+      <ion-col>
+        <h1 class="card-title"> E S C A N E A R </h1>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+  
+  <!--
+  <ion-grid>
+    <ion-row class="fila">
+      <ion-col text-center>
+        <img src="assets/imgs/pesos.png" height="50%" width="auto" alt="" margin padding>
+      </ion-col>
+      <ion-col text-center>
+        <ion-row>
+          <h1 class="credito" [ngStyle]="{'color': credito > 0 ? 'green': 'black' }"> $ {{ credito }} </h1>  
+        </ion-row>
+      </ion-col>
+    </ion-row>
+    <ion-row class="carta">
+        <ion-col>
+          <img  src="assets/imgs/qrCode.png" width="auto">
+        </ion-col>
+        <ion-col text-center>
+          <h1 class="card-title"> E S C A N E A R </h1>
+        </ion-col>
+    </ion-row>
+
+  </ion-grid>
+  -->
+  <!--
   <ion-row class="fila">
     <ion-col class="todo carta texto" text-center (click)="escanear()">
       <h1 class="card-title" padding margin > Escanear </h1>
@@ -19,6 +57,7 @@
     <ion-col text-center class="todo carta imagen">
       <img  padding src="assets/imgs/qrCode.png" width="auto">
     </ion-col>
-  </ion-row>
+  </ion-row> -->
+  
 
 </ion-content>

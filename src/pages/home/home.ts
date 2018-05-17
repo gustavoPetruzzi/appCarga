@@ -62,7 +62,7 @@ export class HomePage {
   guardar(mensaje:string){
     let cargando = this.spinnerCargando();
     cargando.present();
-    let toaster =this.presentToast(mensaje);
+    let loading = this.esperar(this.creaFondo(mensaje, "assets/imgs/plata.png"));
     this.firestore
     .collection('usuarios')
     .doc(this.usuario.id)
@@ -77,9 +77,9 @@ export class HomePage {
     ).then(res =>{
       cargando.dismiss();
       this.credito = this.usuario.credito;
-      toaster.present();
+      loading.present();
       setTimeout(function() {
-        toaster.dismiss();
+        loading.dismiss();
       }, 3000);
     })  
   }
@@ -90,19 +90,22 @@ export class HomePage {
     })
     return spinner;
   }
+  creaFondo(mensaje, imagen){
+    let fondo:string;
+    if(mensaje){
+      fondo = `
+          <div>
+            <ion-row text-center>
+              <img src="${ imagen }">
+            </ion-row>
+            <ion-row>
+              <h1> ${mensaje} </h1>
+            </ion-row> 
+          </div> `;
+    }
+    return fondo;
 
-  presentToast(mensaje:string) {
-    let toast = this.toastCtrl.create({
-      message: mensaje,
-      position: 'bottom'
-    });
-
-    toast.onDidDismiss(() => {
-      console.log('Dismissed toast');
-    });
-
-    return toast;
-}
+  }
   cargarCredito(){
       if(!this.usado(this.codigo)){
         if(this.codigo == "8c95def646b6127282ed50454b73240300dccabc"){
@@ -126,21 +129,35 @@ export class HomePage {
           
         }
         else{
-          let toaster =this.presentToast("Codigo no identificado");
-          toaster.present();
+          let loading = this.esperar(this.creaFondo("Codigo no identificado", "assets/imgs/error.png"));
+          loading.present();
           setTimeout(function() {
-            toaster.dismiss();
+            loading.dismiss();
           }, 3000);
         }
       }
       else{
-        let toaster =                                                                                                                                               this.presentToast("Codigo Ya usado!");
-        toaster.present();
-          setTimeout(function() {
-            toaster.dismiss();
-          }, 3000);
+        let loading = this.esperar(this.creaFondo("Codigo Ya usado", "assets/imgs/error.png"));
       }
   }
+
+  esperar(personalizado?:string) {
+    let loading;
+    if(!personalizado){
+      loading = this.loadingCtrl.create({
+
+        content: 'Por favor, espere...'
+      });
+    }
+    else{
+      loading = this.loadingCtrl.create({
+        spinner: 'hide',
+        content: personalizado,
+      })
+    }
+    return loading;
+  }
+
     /*
   cargado(monto:number){
     this.recienCargado = "+ $" + monto;
