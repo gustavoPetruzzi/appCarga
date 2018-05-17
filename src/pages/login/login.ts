@@ -63,7 +63,7 @@ export class LoginPage {
     }
     switch (this.nombre) {
       case 'admin@gmail.com':
-        this.clave= '11112';
+        this.clave= '111111';
         break;
       case 'invitado@gmail.com':
         this.clave = '222222';
