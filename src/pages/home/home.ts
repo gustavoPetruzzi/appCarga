@@ -138,6 +138,10 @@ export class HomePage {
       }
       else{
         let loading = this.esperar(this.creaFondo("Codigo Ya usado", "assets/imgs/error.png"));
+        loading.present();
+        setTimeout(function() {
+          loading.dismiss();
+        }, 3000);
       }
   }
 
